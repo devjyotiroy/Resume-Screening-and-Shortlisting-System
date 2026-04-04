@@ -1,0 +1,39 @@
+services:
+  # ML Service
+  - type: web
+    name: resume-ml-service
+    env: python
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: PORT
+        value: 5001
+      - key: FLASK_ENV
+        value: production
+
+  # Backend Service
+  - type: web
+    name: resume-backend
+    env: node
+    region: oregon
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: MONGO_URI
+        sync: false
+      - key: ML_SERVICE_URL
+        sync: false
+
+  # Frontend (Static Site)
+  - type: web
+    name: resume-frontend
+    env: static
+    region: oregon
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./build
+    envVars:
+      - key: REACT_APP_API_URL
+        sync: false

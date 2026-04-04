@@ -8,7 +8,10 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*',
+  credentials: true
+}));
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -38,12 +41,13 @@ const connectDB = async () => {
     console.log(`🌐 Host: ${conn.connection.host}`);
     
     // Start server only after DB connection
-    app.listen(PORT, () => {
-      console.log(`🚀 Backend running on http://localhost:${PORT}`);
+    const PORT_NUM = PORT || 5000;
+    app.listen(PORT_NUM, '0.0.0.0', () => {
+      console.log(`🚀 Backend running on port ${PORT_NUM}`);
       console.log(`📊 API Endpoints:`);
-      console.log(`   - POST http://localhost:${PORT}/api/resume/upload`);
-      console.log(`   - GET  http://localhost:${PORT}/api/resume/all`);
-      console.log(`   - DELETE http://localhost:${PORT}/api/resume/:id`);
+      console.log(`   - POST /api/resume/upload`);
+      console.log(`   - GET  /api/resume/all`);
+      console.log(`   - DELETE /api/resume/:id`);
     });
   } catch (err) {
     console.error('❌ MongoDB Connection Error:', err.message);
